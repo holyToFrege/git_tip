@@ -1,0 +1,58 @@
+#+TITLE: About git error 
+#+AUTHOR: Hoyoul Park
+#+DESCRIPTION: Org-HTML export made simple.
+#+KEYWORDS:  org-mode, export, html, theme, style, css, js, bigblow
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:t num:2
+#+MACRO: color @@html:<font color=></font>@@
+#+PROPERTY:  header-args :padline no
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+#+LATEX_HEADER: \usepackage{kotex}
+#+latex_header: \hypersetup{colorlinks=true}
+
+* 이미 있는 local git repository를 github에 올릴때
+** 1st try
+rails로 app을 만들면, 자동으로 local git repository를 만든다. 이것을 github에 저장하기 위해서는 remote를 등록한후 push나  pull을 하면 될꺼라고 생각했다. 예를 들면, 다음과 같이...
+ #+begin_quote
+1) github에서 repository를 만든다. \
+2) local에서 git remote add origin remote_address \
+3) git push, pul을 한다. \
+ #+end_quote
+remote_address는 github의 http address를 사용했다. 그런데 이렇게 하면 permission error가 발생한다. 이것은 remote URL과 local git간의 http access를 시도하는데, 이 때 사용되는 credentials가 os가 제공하는 keychain과 관련되서 그럴 수 있다. 물론 ssh key는 github에 등록이 되어 있다.
+** 2nd try
+permission문제를 해결하기 위해서, 인터넷에 여러 방법을 찾을 수 있는데, 제대로 되지 않았다.
+remote_address를 http 프로토콜이 아닌 git protocol을 사용하면 이 문제를 해결할 수 있다고 한다.
+
+ #+begin_quote
+ 1) github에 접속해서  repository의 address를 http 프로토콜이 아닌 git 프로토콜로 변경한 주소를 복사한다.\
+ 2) 복사한 git protocol 주소를 local에서 이용한다.\
+    git remote add orgin git@github.com:<username>/<repo>.git
+ 3) ssh -T git@github.com
+    
+ #+end_quote
+이렇게 한 다음 test를 해본다.
+
+ #+begin_quote
+ git push -u origin master
+ #+end_quote
+
+
+
+* github과 local git
+github에서  repository를 만든 후에 local에서 만들어진 git을 올릴때 다음과 같은 에러가 발생할수 있다.
+#+CAPTION: error of push refs
+#+NAME: push refs
+#+attr_html: :width 800px
+#+attr_latex: :width 100px
+[[./img/giterror.png]]
+- [해결책]
+  1) 우리가 만들 project를 local에서 작성하든, raiils같은 경우, 이미 만들어져 있는 경우도 있다.
+  2) local에서 git commit을 만든다.
+  3) github에서 repository를 만든다.
+  4) 만든 repository의 주소를 localㅔ서  remote add orgin git주소]의 형태로 동기화한다.
+  5) git branch -M main
+  6) git push -u origin main
+  => 이렇게 했는데, remote gith을 못찾는 fata error가 발생한다면, 이것은 ssh key 등록이 안되어 있을 수 있다. 확인하고 다시 시도 한다.
+     
+     
+     
