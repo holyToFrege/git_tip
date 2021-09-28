@@ -30,19 +30,19 @@
 [[./img/bothgithub2.png]]
 * 2_ssh-agent사용
 #+begin_note
-ssh-agent는 private key와 public key를 관리하는 daemon이다. 일반적으로 mac에는 기본적으로 ssh-agent가 떠 있다. agent는 등록된 key를 사용해서 접속해야 하는 경우, 자동으로 처리를 해주기 때문에, ssh-agent에 해당 key를 등록해준다.
+ssh-agent는 private key와 public key를 관리하는 daemon이다. 일반적으로 mac에는 기본적으로 ssh-agent가 떠 있다. agent는 등록된 key를 사용해서 접속해야 하는 경우, 자동으로 처리를 해주기 때문에, ssh-agent에 해당 key를 등록해준다. ssh-add를 사용해서 ssh-agent에 등록을 한다. 
 #+end_note
 #+CAPTION: ssh-agent등록
 #+NAME: 
 #+attr_html: :width 800px
 #+attr_latex: :width 100px
 [[./img/bothgithub3.png]]
-* public key를 github에 등록
+* 3_public key를 github에 등록
 #+begin_note
 개인 github에는 개인 public key를 등록한다. 회사 github에는 회사 public key를 등록한다.
 github->settings->ssh keys등록하는 곳에 등록한다.
 #+end_note
-* ssh config설정
+* 4_ssh config설정
 #+begin_note
 .ssh아래에 config파일을 만든다. 그리고 config파일에서 host와 public key를 명시해야 한다. config설정파일을 꼭 만들어야 하는가?음..이게 무슨 말이냐면? 우리는 보통 ssh test@example.com과 같이 ssh연결을 시도한다. 이 연결에는 숨겨진 동작이 있는데,  ssh는 .ssh/id_rsa라는 key파일에서 public key를 사용해서 test란 id로 접속을 시도한다. 즉 ssh key가 자동으로 사용된다는 것이다. ssh 서버가 2대이거나, github계정이 2개라면 하나는 접속하지 못한다. 동일한 ssh key를 사용하기 때문이다. A라는 server에는 id_rsa_me를 사용하고, B라는 server에는 id_rsa_work를 사용한다면, 이를 구분해 줘야 한다. 안그렇다면, 동일한 ssh key를 사용할 것이기 때문이다. 아래와 같이 설정한다. Host는 이름으로 봐도 좋고, HostName은 실제 접속주소(ip or domain)를 의미한다. 주의할 점은 git clone할때 주소는 git@github.com:~~.git으로 하면 안된다. git@github.com-me:로 해야 한다.
 #+end_note
@@ -59,7 +59,7 @@ Host github.com-work
 	User git
 	IdentityFile ~/.ssh/id_rsa_work
  #+end_tip
-* git config 설정
+* 5_git config 설정
 #+begin_note
 +우리가 사용하는 project들에는 .git이라는 폴더가 있고, 그 폴더 안에는 config라는 파일이 있다. project마다, 수정을 해줘야 한다. 이것이 좀 골치 아픈일이다. 회사의 github을 사용한다면 회사의 github에 접근할 수 있게 고쳐줘야 한다. 그리고 개인 github의 project라면 그것에 맞게 고쳐야 한다. 다음은 개인 github에서 가져온 project의 예이다.+
 
@@ -74,7 +74,7 @@ Host github.com-work
  #+begin_tip
  이렇게 project별로 설정을 해주게 된다면, 실제 정상적으로 동작하는지 여부를 테스트하면 된다. 
  #+end_tip
-* Test
+* 6_Test
 #+begin_note
 1. 첫번째로 test할 것은 ssh에 설정된 config가 제대로 동작하는지 확인하는 것이다.
 2. 두번째로 test할 것은 git config 설정이 제대로 되었는가 하는 것이다. 제대로 되어 있다면, git push와 git pull하는데 문제가 없을 것이다. => 문제가 없다.
@@ -84,4 +84,9 @@ Host github.com-work
 #+attr_html: :width 800px
 #+attr_latex: :width 100px
 [[./img/bothgithub5.png]]
+* 7_error
+#+begin_note
+permission error가 나올 경우, 대부분은 ssh-agent에 key가 없어서 발생하는 문제다. 이전에 ssh-add를 통해서 key를 agent에 등록했으나, computer가 다시 부팅되었거나 하면, key가 없어진다. 그래서 다시  ssh-add를 통해서 키를 등록해주어야 한다. 나는 .ssh/config파일에 기술되어 있기 때문에 굳이 ssh-add를 할 필요가 없다고 생각했는데, 그렇지 않은 것 같다.
+
+#+end_note
 
