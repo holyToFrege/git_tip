@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-09-28 Tue 10:29 -->
+<!-- 2021-11-28 Sun 21:12 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>2개의 github 계정 사용하기</title>
@@ -232,20 +232,21 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org61e9c6f">1. issue</a></li>
-<li><a href="#org42a829c">2. 1_ssh key 생성</a></li>
-<li><a href="#org9f1b63e">3. 2_ssh-agent사용</a></li>
-<li><a href="#org9ae0687">4. 3_public key를 github에 등록</a></li>
-<li><a href="#org7a2a38c">5. 4_ssh config설정</a></li>
-<li><a href="#orgc3a3548">6. 5_git config 설정</a></li>
-<li><a href="#orgb561a8c">7. 6_Test</a></li>
+<li><a href="#org811a853">1. issue</a></li>
+<li><a href="#org43f04f1">2. 1_ssh key 생성</a></li>
+<li><a href="#org53008e3">3. 2_ssh-agent사용</a></li>
+<li><a href="#orgc72983b">4. 3_public key를 github에 등록</a></li>
+<li><a href="#org8e79326">5. 4_ssh config설정</a></li>
+<li><a href="#org280c5f0">6. 5_git config 설정</a></li>
+<li><a href="#orgfd60d87">7. 6_Test</a></li>
+<li><a href="#org1a96ff7">8. 7_error</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org61e9c6f" class="outline-2">
-<h2 id="org61e9c6f"><span class="section-number-2">1</span> issue</h2>
+<div id="outline-container-org811a853" class="outline-2">
+<h2 id="org811a853"><span class="section-number-2">1</span> issue</h2>
 <div class="outline-text-2" id="text-1">
-<div class="note" id="org433cf40">
+<div class="note" id="org883f479">
 <p>
 나는 회사 github계정과 개인 github계정이 있다. ssh는 한개의 public key만 유지하고 있어서, 다른 계정은 access가 힘든 문제가 있었다. 이 문제를 해결하고자 한다. <a href="https://velog.io/@sonypark/GitHubSSH%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%B4-%EC%97%AC%EB%9F%AC%EA%B0%9C%EC%9D%98-%EA%B9%83%ED%97%88%EB%B8%8C-%EA%B3%84%EC%A0%95-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-6mk3iesh0u">https://velog.io/@sonypark/GitHubSSH%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%B4-%EC%97%AC%EB%9F%AC%EA%B0%9C%EC%9D%98-%EA%B9%83%ED%97%88%EB%B8%8C-%EA%B3%84%EC%A0%95-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-6mk3iesh0u</a> 를 참조했다. 
 </p>
@@ -253,51 +254,51 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org42a829c" class="outline-2">
-<h2 id="org42a829c"><span class="section-number-2">2</span> 1_ssh key 생성</h2>
+<div id="outline-container-org43f04f1" class="outline-2">
+<h2 id="org43f04f1"><span class="section-number-2">2</span> 1_ssh key 생성</h2>
 <div class="outline-text-2" id="text-2">
-<div class="note" id="org48a6fab">
+<div class="note" id="org4962740">
 <p>
 .ssh폴더에서 2개의 ssh public key를 만들 것이다. 만드는 과정은 아래 그림을 참조한다.
 </p>
 
 </div>
 
-<div id="org7fee27e" class="figure">
+<div id="org91f30b7" class="figure">
 <p><img src="./img/bothgithub1.png" alt="bothgithub1.png" width="800px" />
 </p>
 <p><span class="figure-number">Figure 1: </span>github 개인</p>
 </div>
 
 
-<div id="org0af3ae8" class="figure">
+<div id="orgea1bd32" class="figure">
 <p><img src="./img/bothgithub2.png" alt="bothgithub2.png" width="800px" />
 </p>
 <p><span class="figure-number">Figure 2: </span>github 회사</p>
 </div>
 </div>
 </div>
-<div id="outline-container-org9f1b63e" class="outline-2">
-<h2 id="org9f1b63e"><span class="section-number-2">3</span> 2_ssh-agent사용</h2>
+<div id="outline-container-org53008e3" class="outline-2">
+<h2 id="org53008e3"><span class="section-number-2">3</span> 2_ssh-agent사용</h2>
 <div class="outline-text-2" id="text-3">
-<div class="note" id="orgd86e7c6">
+<div class="note" id="org0f5962a">
 <p>
-ssh-agent는 private key와 public key를 관리하는 daemon이다. 일반적으로 mac에는 기본적으로 ssh-agent가 떠 있다. agent는 등록된 key를 사용해서 접속해야 하는 경우, 자동으로 처리를 해주기 때문에, ssh-agent에 해당 key를 등록해준다.
+ssh-agent는 private key와 public key를 관리하는 daemon이다. 일반적으로 mac에는 기본적으로 ssh-agent가 떠 있다. agent는 등록된 key를 사용해서 접속해야 하는 경우, 자동으로 처리를 해주기 때문에, ssh-agent에 해당 key를 등록해준다. ssh-add를 사용해서 ssh-agent에 등록을 한다. 
 </p>
 
 </div>
 
-<div id="orga39da2d" class="figure">
+<div id="orgbb387e0" class="figure">
 <p><img src="./img/bothgithub3.png" alt="bothgithub3.png" width="800px" />
 </p>
 <p><span class="figure-number">Figure 3: </span>ssh-agent등록</p>
 </div>
 </div>
 </div>
-<div id="outline-container-org9ae0687" class="outline-2">
-<h2 id="org9ae0687"><span class="section-number-2">4</span> 3_public key를 github에 등록</h2>
+<div id="outline-container-orgc72983b" class="outline-2">
+<h2 id="orgc72983b"><span class="section-number-2">4</span> 3_public key를 github에 등록</h2>
 <div class="outline-text-2" id="text-4">
-<div class="note" id="org4dd893b">
+<div class="note" id="org4aab3d6">
 <p>
 개인 github에는 개인 public key를 등록한다. 회사 github에는 회사 public key를 등록한다.
 github-&gt;settings-&gt;ssh keys등록하는 곳에 등록한다.
@@ -306,16 +307,16 @@ github-&gt;settings-&gt;ssh keys등록하는 곳에 등록한다.
 </div>
 </div>
 </div>
-<div id="outline-container-org7a2a38c" class="outline-2">
-<h2 id="org7a2a38c"><span class="section-number-2">5</span> 4_ssh config설정</h2>
+<div id="outline-container-org8e79326" class="outline-2">
+<h2 id="org8e79326"><span class="section-number-2">5</span> 4_ssh config설정</h2>
 <div class="outline-text-2" id="text-5">
-<div class="note" id="org36815f4">
+<div class="note" id="org2f9acdf">
 <p>
 .ssh아래에 config파일을 만든다. 그리고 config파일에서 host와 public key를 명시해야 한다. config설정파일을 꼭 만들어야 하는가?음..이게 무슨 말이냐면? 우리는 보통 ssh test@example.com과 같이 ssh연결을 시도한다. 이 연결에는 숨겨진 동작이 있는데,  ssh는 .ssh/id_rsa라는 key파일에서 public key를 사용해서 test란 id로 접속을 시도한다. 즉 ssh key가 자동으로 사용된다는 것이다. ssh 서버가 2대이거나, github계정이 2개라면 하나는 접속하지 못한다. 동일한 ssh key를 사용하기 때문이다. A라는 server에는 id_rsa_me를 사용하고, B라는 server에는 id_rsa_work를 사용한다면, 이를 구분해 줘야 한다. 안그렇다면, 동일한 ssh key를 사용할 것이기 때문이다. 아래와 같이 설정한다. Host는 이름으로 봐도 좋고, HostName은 실제 접속주소(ip or domain)를 의미한다. 주의할 점은 git clone할때 주소는 git@github.com:~~.git으로 하면 안된다. git@github.com-me:로 해야 한다.
 </p>
 
 </div>
-<div class="tip" id="org309077f">
+<div class="tip" id="orga0c377d">
 <p>
 Host github.com-me
 	HostName github.com
@@ -333,26 +334,32 @@ Host github.com-work
 </div>
 </div>
 </div>
-<div id="outline-container-orgc3a3548" class="outline-2">
-<h2 id="orgc3a3548"><span class="section-number-2">6</span> 5_git config 설정</h2>
+<div id="outline-container-org280c5f0" class="outline-2">
+<h2 id="org280c5f0"><span class="section-number-2">6</span> 5_git config 설정</h2>
 <div class="outline-text-2" id="text-6">
-<div class="note" id="orgd4d6249">
-<p>
-<del>우리가 사용하는 project들에는 .git이라는 폴더가 있고, 그 폴더 안에는 config라는 파일이 있다. project마다, 수정을 해줘야 한다. 이것이 좀 골치 아픈일이다. 회사의 github을 사용한다면 회사의 github에 접근할 수 있게 고쳐줘야 한다. 그리고 개인 github의 project라면 그것에 맞게 고쳐야 한다. 다음은 개인 github에서 가져온 project의 예이다.</del>
-</p>
-
-<p>
-.git/config에서 특별한 처리를 하지 않아도 push와 pull이 된다. 오히려 .git/config에서 주소를 변경시 에러가 난다.
-</p>
+<div class="note" id="org5824e3f">
+<ul class="org-ul">
+<li>~/.gitconfig라는 파일을 수정해야 한다. 여기에 기입하면, git global로 설정하는 것과 같다.</li>
+<li>여러개의 계정을 등록해야 하는데, 방법은 includeIf라는 문장을 사용해서 폴더별로 분류한다.</li>
+<li>default로 하나를 설정해서 [user]로 결정하고, 나머지는 폴더별로 다른 파일로 기술한다.</li>
+</ul>
 
 </div>
+<pre class="example" id="orgfe2a045">
+[user] 
+        email = {YourPersonalGithub}@gmail.com
+        name = {YourPersonalGithubName}
+[includeIf “gitdir:~/Company-git/”] 
+        path = .gitconfig-company
+</pre>
 
-<div id="orgd2c0421" class="figure">
+
+<div id="org2e64d12" class="figure">
 <p><img src="./img/bothgithub4.png" alt="bothgithub4.png" width="800px" />
 </p>
 </div>
 
-<div class="tip" id="org476bf97">
+<div class="tip" id="orga273820">
 <p>
 이렇게 project별로 설정을 해주게 된다면, 실제 정상적으로 동작하는지 여부를 테스트하면 된다. 
 </p>
@@ -360,10 +367,10 @@ Host github.com-work
 </div>
 </div>
 </div>
-<div id="outline-container-orgb561a8c" class="outline-2">
-<h2 id="orgb561a8c"><span class="section-number-2">7</span> 6_Test</h2>
+<div id="outline-container-orgfd60d87" class="outline-2">
+<h2 id="orgfd60d87"><span class="section-number-2">7</span> 6_Test</h2>
 <div class="outline-text-2" id="text-7">
-<div class="note" id="orgbd8f180">
+<div class="note" id="org0707161">
 <ol class="org-ol">
 <li>첫번째로 test할 것은 ssh에 설정된 config가 제대로 동작하는지 확인하는 것이다.</li>
 <li>두번째로 test할 것은 git config 설정이 제대로 되었는가 하는 것이다. 제대로 되어 있다면, git push와 git pull하는데 문제가 없을 것이다. =&gt; 문제가 없다.</li>
@@ -371,17 +378,28 @@ Host github.com-work
 
 </div>
 
-<div id="orgfe8a578" class="figure">
+<div id="org5690e37" class="figure">
 <p><img src="./img/bothgithub5.png" alt="bothgithub5.png" width="800px" />
 </p>
 <p><span class="figure-number">Figure 5: </span>both</p>
 </div>
 </div>
 </div>
+<div id="outline-container-org1a96ff7" class="outline-2">
+<h2 id="org1a96ff7"><span class="section-number-2">8</span> 7_error</h2>
+<div class="outline-text-2" id="text-8">
+<div class="note" id="orge3222e0">
+<p>
+permission error가 나올 경우, 대부분은 ssh-agent에 key가 없어서 발생하는 문제다. 이전에 ssh-add를 통해서 key를 agent에 등록했으나, computer가 다시 부팅되었거나 하면, key가 없어진다. 그래서 다시  ssh-add를 통해서 키를 등록해주어야 한다. 나는 .ssh/config파일에 기술되어 있기 때문에 굳이 ssh-add를 할 필요가 없다고 생각했는데, 그렇지 않은 것 같다.
+</p>
+
+</div>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Holy Frege</p>
-<p class="date">Created: 2021-09-28 Tue 10:29</p>
+<p class="date">Created: 2021-11-28 Sun 21:12</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

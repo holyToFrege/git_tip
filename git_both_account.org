@@ -61,10 +61,18 @@ Host github.com-work
  #+end_tip
 * 5_git config 설정
 #+begin_note
-+우리가 사용하는 project들에는 .git이라는 폴더가 있고, 그 폴더 안에는 config라는 파일이 있다. project마다, 수정을 해줘야 한다. 이것이 좀 골치 아픈일이다. 회사의 github을 사용한다면 회사의 github에 접근할 수 있게 고쳐줘야 한다. 그리고 개인 github의 project라면 그것에 맞게 고쳐야 한다. 다음은 개인 github에서 가져온 project의 예이다.+
-
-.git/config에서 특별한 처리를 하지 않아도 push와 pull이 된다. 오히려 .git/config에서 주소를 변경시 에러가 난다.
+- ~/.gitconfig라는 파일을 수정해야 한다. 여기에 기입하면, git global로 설정하는 것과 같다.
+- 여러개의 계정을 등록해야 하는데, 방법은 includeIf라는 문장을 사용해서 폴더별로 분류한다.
+- default로 하나를 설정해서 [user]로 결정하고, 나머지는 폴더별로 다른 파일로 기술한다.
 #+end_note
+ #+begin_example
+[user] 
+        email = {YourPersonalGithub}@gmail.com
+        name = {YourPersonalGithubName}
+[includeIf “gitdir:~/Company-git/”] 
+        path = .gitconfig-company
+ #+end_example
+
 #+CAPTION: 
 #+NAME: 
 #+attr_html: :width 800px
@@ -89,4 +97,7 @@ Host github.com-work
 permission error가 나올 경우, 대부분은 ssh-agent에 key가 없어서 발생하는 문제다. 이전에 ssh-add를 통해서 key를 agent에 등록했으나, computer가 다시 부팅되었거나 하면, key가 없어진다. 그래서 다시  ssh-add를 통해서 키를 등록해주어야 한다. 나는 .ssh/config파일에 기술되어 있기 때문에 굳이 ssh-add를 할 필요가 없다고 생각했는데, 그렇지 않은 것 같다.
 
 #+end_note
-
+* 참조
+https://hyeon9mak.github.io/github-personal-access-token
+https://medium.com/@ibrahimlawal/developing-with-multiple-github-accounts-on-one-macbook-94ff6d4ab9aca
+https://www.hahwul.com/2018/08/22/git-credential-helper/
