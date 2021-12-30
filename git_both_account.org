@@ -1,4 +1,4 @@
-#+TITLE: 2개의 github 계정 사용하기
+#+TITLE:  Multiple github 계정 사용하기 on mac
 #+AUTHOR: Holy Frege
 #+DESCRIPTION: Org-HTML export made simple.
 #+KEYWORDS:  org-mode, export, html, theme, style, css, js, bigblow
@@ -11,8 +11,54 @@
 #+latex_header: \hypersetup{colorlinks=true}
 * issue
 #+begin_note
-나는 회사 github계정과 개인 github계정이 있다. ssh는 한개의 public key만 유지하고 있어서, 다른 계정은 access가 힘든 문제가 있었다. 이 문제를 해결하고자 한다. https://velog.io/@sonypark/GitHubSSH를-이용해-여러개의-깃허브-계정-사용하기-6mk3iesh0u 를 참조했다. 
+나는 회사 github계정과 개인 github계정이 있다. 그리고 연구 계정도 있다. 각 계정마다, repository가 있는데, 특정 계정으로 push를 했을 때는 문제 없이 된다. 그런데 다른계정으로 push할 때는 다음과 같은 에러가 발생한다.
 #+end_note
+#+CAPTION: error1
+#+NAME: 
+#+attr_latex: :width 100px
+[[./img/error1.png]]
+즉 push가 안된다는 문제가 있다. 결론적으로 해결할 순 있다. 우선 해결책 부터 쓰고, 과정을 설명하겠다.
+* 해결법
+- 현재 push하고자 하는 repository의 사용자를 알아야 한다. (git config --list)
+  #+CAPTION: config
+#+NAME: 
+#+attr_latex: :width 100px
+[[./img/cofig.png]]
+
+- 여기선 사용자가 누구인지만 알면 된다. 즉 email주소다.  그리고, osxkeychain에 id와 pw가 있으니까 그걸 사용하겠다는 정보도 있다.
+- osxkeychain을 실행한다. (launchpad에서 keychain을 치면 app을 실행할 수 있다.)
+- keychain에서 github으로 검색한다.
+  #+CAPTION: login
+#+NAME: login
+#+attr_latex: :width 100px
+[[./img/login.png]]
+login할때 사용되는 github의 정보를 본다.
+
+#+CAPTION: login2
+#+NAME: 
+#+attr_html: :width 400px :height 300px
+#+attr_latex: :width 100px
+[[./img/login2.png]]
+
+이렇게 해서 push할 수 있다. 또 다른 계정의 repository로 가서 push한다면 또 이 과정을 거쳐야 한다.
+왜냐면, *osxkeychain의 githup login keychain이 단 1개만 존재하기 때문이다.* github이라는 사이트에 여러개의 계정이 없다고 생각하고 하나의 계정만 존재한다. 그래서 하나의 keychain을 정보를 변경해가면서 사용해야 한다. 아래 내정보를 기입했다.
+* 내정보
+1) holy_frege@fastmail.com
+   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
+2) pncltd@hanmail.net(pncltd755!)
+   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
+3) research.jeju@gmail.com(jeju!123)
+   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
+* 개념
+** git-config
+- git에서 commit을 만들때, 사용자 정보가 들어간다.
+- 설정이 없으면 commit이 만들어지지 않는다.
+- repository별(.git/config), global(.gitconfig), system(/etc/gitconfig)에서 설정할 수 있다.
+*** 나의 정책
+
+** ssh
+
+
 * 1_ssh key 생성
 #+begin_note
 .ssh폴더에서 2개의 ssh public key를 만들 것이다. 만드는 과정은 아래 그림을 참조한다.

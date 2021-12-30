@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-11-28 Sun 21:12 -->
+<!-- 2021-11-30 Tue 13:10 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>2개의 github 계정 사용하기</title>
+<title>Multiple github 계정 사용하기 on mac</title>
 <meta name="generator" content="Org mode" />
 <meta name="author" content="Holy Frege" />
 <meta name="description" content="Org-HTML export made simple."
@@ -227,78 +227,171 @@
 </head>
 <body>
 <div id="content">
-<h1 class="title">2개의 github 계정 사용하기</h1>
+<h1 class="title">Multiple github 계정 사용하기 on mac</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org811a853">1. issue</a></li>
-<li><a href="#org43f04f1">2. 1_ssh key 생성</a></li>
-<li><a href="#org53008e3">3. 2_ssh-agent사용</a></li>
-<li><a href="#orgc72983b">4. 3_public key를 github에 등록</a></li>
-<li><a href="#org8e79326">5. 4_ssh config설정</a></li>
-<li><a href="#org280c5f0">6. 5_git config 설정</a></li>
-<li><a href="#orgfd60d87">7. 6_Test</a></li>
-<li><a href="#org1a96ff7">8. 7_error</a></li>
+<li><a href="#orge268f04">1. issue</a></li>
+<li><a href="#orgd81d8cf">2. 해결법</a></li>
+<li><a href="#org14a1ca1">3. 내정보</a></li>
+<li><a href="#orgf80ab1b">4. 개념</a>
+<ul>
+<li><a href="#orgfb73690">4.1. git-config</a>
+<ul>
+<li><a href="#org9a2455f">나의 정책</a></li>
+</ul>
+</li>
+<li><a href="#org7f671a9">4.2. ssh</a></li>
+</ul>
+</li>
+<li><a href="#orgd63bd99">5. 1_ssh key 생성</a></li>
+<li><a href="#org38a86f2">6. 2_ssh-agent사용</a></li>
+<li><a href="#orgab01573">7. 3_public key를 github에 등록</a></li>
+<li><a href="#orge284ced">8. 4_ssh config설정</a></li>
+<li><a href="#orgbb3d11b">9. 5_git config 설정</a></li>
+<li><a href="#orgfb1432a">10. 6_Test</a></li>
+<li><a href="#orgd1edbdb">11. 7_error</a></li>
+<li><a href="#orgb82d432">12. 참조</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org811a853" class="outline-2">
-<h2 id="org811a853"><span class="section-number-2">1</span> issue</h2>
+<div id="outline-container-orge268f04" class="outline-2">
+<h2 id="orge268f04"><span class="section-number-2">1</span> issue</h2>
 <div class="outline-text-2" id="text-1">
-<div class="note" id="org883f479">
+<div class="note" id="org3a97c48">
 <p>
-나는 회사 github계정과 개인 github계정이 있다. ssh는 한개의 public key만 유지하고 있어서, 다른 계정은 access가 힘든 문제가 있었다. 이 문제를 해결하고자 한다. <a href="https://velog.io/@sonypark/GitHubSSH%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%B4-%EC%97%AC%EB%9F%AC%EA%B0%9C%EC%9D%98-%EA%B9%83%ED%97%88%EB%B8%8C-%EA%B3%84%EC%A0%95-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-6mk3iesh0u">https://velog.io/@sonypark/GitHubSSH%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%B4-%EC%97%AC%EB%9F%AC%EA%B0%9C%EC%9D%98-%EA%B9%83%ED%97%88%EB%B8%8C-%EA%B3%84%EC%A0%95-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-6mk3iesh0u</a> 를 참조했다. 
+나는 회사 github계정과 개인 github계정이 있다. 그리고 연구 계정도 있다. 각 계정마다, repository가 있는데, 특정 계정으로 push를 했을 때는 문제 없이 된다. 그런데 다른계정으로 push할 때는 다음과 같은 에러가 발생한다.
 </p>
 
 </div>
+<p>
+<img src="./img/error1.png" alt="error1.png" />
+즉 push가 안된다는 문제가 있다. 결론적으로 해결할 순 있다. 우선 해결책 부터 쓰고, 과정을 설명하겠다.
+</p>
 </div>
 </div>
-<div id="outline-container-org43f04f1" class="outline-2">
-<h2 id="org43f04f1"><span class="section-number-2">2</span> 1_ssh key 생성</h2>
+<div id="outline-container-orgd81d8cf" class="outline-2">
+<h2 id="orgd81d8cf"><span class="section-number-2">2</span> 해결법</h2>
 <div class="outline-text-2" id="text-2">
-<div class="note" id="org4962740">
+<ul class="org-ul">
+<li><p>
+현재 push하고자 하는 repository의 사용자를 알아야 한다. (git config &#x2013;list)
+</p></li>
+</ul>
+
+<div id="orgd6aaebc" class="figure">
+<p><img src="./img/cofig.png" alt="cofig.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>여기선 사용자가 누구인지만 알면 된다. 즉 email주소다.  그리고, osxkeychain에 id와 pw가 있으니까 그걸 사용하겠다는 정보도 있다.</li>
+<li>osxkeychain을 실행한다. (launchpad에서 keychain을 치면 app을 실행할 수 있다.)</li>
+<li><p>
+keychain에서 github으로 검색한다.
+</p></li>
+</ul>
+<p>
+<img src="./img/login.png" alt="login.png" />
+login할때 사용되는 github의 정보를 본다.
+</p>
+
+
+<div id="orgc08b5b3" class="figure">
+<p><img src="./img/login2.png" alt="login2.png" width="400px" height="300px" />
+</p>
+<p><span class="figure-number">Figure 2: </span>login2</p>
+</div>
+
+<p>
+이렇게 해서 push할 수 있다. 또 다른 계정의 repository로 가서 push한다면 또 이 과정을 거쳐야 한다.
+왜냐면, <b>osxkeychain의 githup login keychain이 단 1개만 존재하기 때문이다.</b> github이라는 사이트에 여러개의 계정이 없다고 생각하고 하나의 계정만 존재한다. 그래서 하나의 keychain을 정보를 변경해가면서 사용해야 한다. 아래 내정보를 기입했다.
+</p>
+</div>
+</div>
+<div id="outline-container-org14a1ca1" class="outline-2">
+<h2 id="org14a1ca1"><span class="section-number-2">3</span> 내정보</h2>
+<div class="outline-text-2" id="text-3">
+<ol class="org-ol">
+<li>holy_frege@fastmail.com
+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</li>
+<li>pncltd@hanmail.net(pncltd755!)
+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</li>
+<li>research.jeju@gmail.com(jeju!123)
+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</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgf80ab1b" class="outline-2">
+<h2 id="orgf80ab1b"><span class="section-number-2">4</span> 개념</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-orgfb73690" class="outline-3">
+<h3 id="orgfb73690"><span class="section-number-3">4.1</span> git-config</h3>
+<div class="outline-text-3" id="text-4-1">
+<ul class="org-ul">
+<li>git에서 commit을 만들때, 사용자 정보가 들어간다.</li>
+<li>설정이 없으면 commit이 만들어지지 않는다.</li>
+<li>repository별(.git/config), global(.gitconfig), system(/etc/gitconfig)에서 설정할 수 있다.</li>
+</ul>
+</div>
+<div id="outline-container-org9a2455f" class="outline-4">
+<h4 id="org9a2455f">나의 정책</h4>
+</div>
+</div>
+
+<div id="outline-container-org7f671a9" class="outline-3">
+<h3 id="org7f671a9"><span class="section-number-3">4.2</span> ssh</h3>
+</div>
+</div>
+
+
+<div id="outline-container-orgd63bd99" class="outline-2">
+<h2 id="orgd63bd99"><span class="section-number-2">5</span> 1_ssh key 생성</h2>
+<div class="outline-text-2" id="text-5">
+<div class="note" id="org22651dd">
 <p>
 .ssh폴더에서 2개의 ssh public key를 만들 것이다. 만드는 과정은 아래 그림을 참조한다.
 </p>
 
 </div>
 
-<div id="org91f30b7" class="figure">
+<div id="org9e6118d" class="figure">
 <p><img src="./img/bothgithub1.png" alt="bothgithub1.png" width="800px" />
 </p>
-<p><span class="figure-number">Figure 1: </span>github 개인</p>
+<p><span class="figure-number">Figure 3: </span>github 개인</p>
 </div>
 
 
-<div id="orgea1bd32" class="figure">
+<div id="orgf1c4556" class="figure">
 <p><img src="./img/bothgithub2.png" alt="bothgithub2.png" width="800px" />
 </p>
-<p><span class="figure-number">Figure 2: </span>github 회사</p>
+<p><span class="figure-number">Figure 4: </span>github 회사</p>
 </div>
 </div>
 </div>
-<div id="outline-container-org53008e3" class="outline-2">
-<h2 id="org53008e3"><span class="section-number-2">3</span> 2_ssh-agent사용</h2>
-<div class="outline-text-2" id="text-3">
-<div class="note" id="org0f5962a">
+<div id="outline-container-org38a86f2" class="outline-2">
+<h2 id="org38a86f2"><span class="section-number-2">6</span> 2_ssh-agent사용</h2>
+<div class="outline-text-2" id="text-6">
+<div class="note" id="org27d88a4">
 <p>
 ssh-agent는 private key와 public key를 관리하는 daemon이다. 일반적으로 mac에는 기본적으로 ssh-agent가 떠 있다. agent는 등록된 key를 사용해서 접속해야 하는 경우, 자동으로 처리를 해주기 때문에, ssh-agent에 해당 key를 등록해준다. ssh-add를 사용해서 ssh-agent에 등록을 한다. 
 </p>
 
 </div>
 
-<div id="orgbb387e0" class="figure">
+<div id="org18d1e62" class="figure">
 <p><img src="./img/bothgithub3.png" alt="bothgithub3.png" width="800px" />
 </p>
-<p><span class="figure-number">Figure 3: </span>ssh-agent등록</p>
+<p><span class="figure-number">Figure 5: </span>ssh-agent등록</p>
 </div>
 </div>
 </div>
-<div id="outline-container-orgc72983b" class="outline-2">
-<h2 id="orgc72983b"><span class="section-number-2">4</span> 3_public key를 github에 등록</h2>
-<div class="outline-text-2" id="text-4">
-<div class="note" id="org4aab3d6">
+<div id="outline-container-orgab01573" class="outline-2">
+<h2 id="orgab01573"><span class="section-number-2">7</span> 3_public key를 github에 등록</h2>
+<div class="outline-text-2" id="text-7">
+<div class="note" id="org73fbece">
 <p>
 개인 github에는 개인 public key를 등록한다. 회사 github에는 회사 public key를 등록한다.
 github-&gt;settings-&gt;ssh keys등록하는 곳에 등록한다.
@@ -307,16 +400,16 @@ github-&gt;settings-&gt;ssh keys등록하는 곳에 등록한다.
 </div>
 </div>
 </div>
-<div id="outline-container-org8e79326" class="outline-2">
-<h2 id="org8e79326"><span class="section-number-2">5</span> 4_ssh config설정</h2>
-<div class="outline-text-2" id="text-5">
-<div class="note" id="org2f9acdf">
+<div id="outline-container-orge284ced" class="outline-2">
+<h2 id="orge284ced"><span class="section-number-2">8</span> 4_ssh config설정</h2>
+<div class="outline-text-2" id="text-8">
+<div class="note" id="org737e24f">
 <p>
 .ssh아래에 config파일을 만든다. 그리고 config파일에서 host와 public key를 명시해야 한다. config설정파일을 꼭 만들어야 하는가?음..이게 무슨 말이냐면? 우리는 보통 ssh test@example.com과 같이 ssh연결을 시도한다. 이 연결에는 숨겨진 동작이 있는데,  ssh는 .ssh/id_rsa라는 key파일에서 public key를 사용해서 test란 id로 접속을 시도한다. 즉 ssh key가 자동으로 사용된다는 것이다. ssh 서버가 2대이거나, github계정이 2개라면 하나는 접속하지 못한다. 동일한 ssh key를 사용하기 때문이다. A라는 server에는 id_rsa_me를 사용하고, B라는 server에는 id_rsa_work를 사용한다면, 이를 구분해 줘야 한다. 안그렇다면, 동일한 ssh key를 사용할 것이기 때문이다. 아래와 같이 설정한다. Host는 이름으로 봐도 좋고, HostName은 실제 접속주소(ip or domain)를 의미한다. 주의할 점은 git clone할때 주소는 git@github.com:~~.git으로 하면 안된다. git@github.com-me:로 해야 한다.
 </p>
 
 </div>
-<div class="tip" id="orga0c377d">
+<div class="tip" id="org7f66bd3">
 <p>
 Host github.com-me
 	HostName github.com
@@ -334,10 +427,10 @@ Host github.com-work
 </div>
 </div>
 </div>
-<div id="outline-container-org280c5f0" class="outline-2">
-<h2 id="org280c5f0"><span class="section-number-2">6</span> 5_git config 설정</h2>
-<div class="outline-text-2" id="text-6">
-<div class="note" id="org5824e3f">
+<div id="outline-container-orgbb3d11b" class="outline-2">
+<h2 id="orgbb3d11b"><span class="section-number-2">9</span> 5_git config 설정</h2>
+<div class="outline-text-2" id="text-9">
+<div class="note" id="orgd9daa5e">
 <ul class="org-ul">
 <li>~/.gitconfig라는 파일을 수정해야 한다. 여기에 기입하면, git global로 설정하는 것과 같다.</li>
 <li>여러개의 계정을 등록해야 하는데, 방법은 includeIf라는 문장을 사용해서 폴더별로 분류한다.</li>
@@ -345,7 +438,7 @@ Host github.com-work
 </ul>
 
 </div>
-<pre class="example" id="orgfe2a045">
+<pre class="example" id="orgb700336">
 [user] 
         email = {YourPersonalGithub}@gmail.com
         name = {YourPersonalGithubName}
@@ -354,12 +447,12 @@ Host github.com-work
 </pre>
 
 
-<div id="org2e64d12" class="figure">
+<div id="org628a63a" class="figure">
 <p><img src="./img/bothgithub4.png" alt="bothgithub4.png" width="800px" />
 </p>
 </div>
 
-<div class="tip" id="orga273820">
+<div class="tip" id="orgb7928bc">
 <p>
 이렇게 project별로 설정을 해주게 된다면, 실제 정상적으로 동작하는지 여부를 테스트하면 된다. 
 </p>
@@ -367,10 +460,10 @@ Host github.com-work
 </div>
 </div>
 </div>
-<div id="outline-container-orgfd60d87" class="outline-2">
-<h2 id="orgfd60d87"><span class="section-number-2">7</span> 6_Test</h2>
-<div class="outline-text-2" id="text-7">
-<div class="note" id="org0707161">
+<div id="outline-container-orgfb1432a" class="outline-2">
+<h2 id="orgfb1432a"><span class="section-number-2">10</span> 6_Test</h2>
+<div class="outline-text-2" id="text-10">
+<div class="note" id="org6e44517">
 <ol class="org-ol">
 <li>첫번째로 test할 것은 ssh에 설정된 config가 제대로 동작하는지 확인하는 것이다.</li>
 <li>두번째로 test할 것은 git config 설정이 제대로 되었는가 하는 것이다. 제대로 되어 있다면, git push와 git pull하는데 문제가 없을 것이다. =&gt; 문제가 없다.</li>
@@ -378,17 +471,17 @@ Host github.com-work
 
 </div>
 
-<div id="org5690e37" class="figure">
+<div id="org108b748" class="figure">
 <p><img src="./img/bothgithub5.png" alt="bothgithub5.png" width="800px" />
 </p>
-<p><span class="figure-number">Figure 5: </span>both</p>
+<p><span class="figure-number">Figure 7: </span>both</p>
 </div>
 </div>
 </div>
-<div id="outline-container-org1a96ff7" class="outline-2">
-<h2 id="org1a96ff7"><span class="section-number-2">8</span> 7_error</h2>
-<div class="outline-text-2" id="text-8">
-<div class="note" id="orge3222e0">
+<div id="outline-container-orgd1edbdb" class="outline-2">
+<h2 id="orgd1edbdb"><span class="section-number-2">11</span> 7_error</h2>
+<div class="outline-text-2" id="text-11">
+<div class="note" id="org6a700d4">
 <p>
 permission error가 나올 경우, 대부분은 ssh-agent에 key가 없어서 발생하는 문제다. 이전에 ssh-add를 통해서 key를 agent에 등록했으나, computer가 다시 부팅되었거나 하면, key가 없어진다. 그래서 다시  ssh-add를 통해서 키를 등록해주어야 한다. 나는 .ssh/config파일에 기술되어 있기 때문에 굳이 ssh-add를 할 필요가 없다고 생각했는데, 그렇지 않은 것 같다.
 </p>
@@ -396,10 +489,20 @@ permission error가 나올 경우, 대부분은 ssh-agent에 key가 없어서 �
 </div>
 </div>
 </div>
+<div id="outline-container-orgb82d432" class="outline-2">
+<h2 id="orgb82d432"><span class="section-number-2">12</span> 참조</h2>
+<div class="outline-text-2" id="text-12">
+<p>
+<a href="https://hyeon9mak.github.io/github-personal-access-token">https://hyeon9mak.github.io/github-personal-access-token</a>
+<a href="https://medium.com/@ibrahimlawal/developing-with-multiple-github-accounts-on-one-macbook-94ff6d4ab9aca">https://medium.com/@ibrahimlawal/developing-with-multiple-github-accounts-on-one-macbook-94ff6d4ab9aca</a>
+<a href="https://www.hahwul.com/2018/08/22/git-credential-helper/">https://www.hahwul.com/2018/08/22/git-credential-helper/</a>
+</p>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Holy Frege</p>
-<p class="date">Created: 2021-11-28 Sun 21:12</p>
+<p class="date">Created: 2021-11-30 Tue 13:10</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
